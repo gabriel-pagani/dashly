@@ -162,11 +162,49 @@ function Sidebar({ onSelectDashboard, currentUser }) {
       .catch((error) => console.error("Erro ao favoritar:", error));
   };
 
-  const normalizeText = (text) =>
-    text
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+const normalizeText = (text) =>
+  text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+const getLevenshteinDistance = (source, target) => {
+  if (!source.length) return target.length;
+  if (!target.length) return source.length;
+
+  const rows = target.length + 1;
+  const cols = source.length + 1;
+  const matrix = Array.from({ length: rows }, () =>
+    new Array(cols).fill(0)
+  );
+
+  for (let i = 0; i < rows; i++) matrix[i][0] = i;
+  for (let j = 0; j < cols; j++) matrix[0][j] = j;
+
+  for (let i = 1; i < rows; i++) {
+    for (let j = 1; j < cols; j++) {
+      const cost = target[i - 1] === source[j - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
+    }
+  }
+
+  return matrix[rows - 1][cols - 1];
+};
+
+const hasFuzzyMatch = (text, normalizedTerm) => {
+  if (!normalizedTerm) return true;
+
+  const normalizedText = normalizeText(text);
+  if (normalizedText.includes(normalizedTerm)) return true;
+
+  const distance = getLevenshteinDistance(normalizedText, normalizedTerm);
+  const allowedError = Math.max(1, Math.floor(normalizedTerm.length * 0.4));
+  return distance <= allowedError;
+};
 
   const filteredSectors = useMemo(() => {
     if (!searchTerm) {
@@ -178,7 +216,7 @@ function Sidebar({ onSelectDashboard, currentUser }) {
 
     Object.entries(sectors).forEach(([sectorName, dashboards]) => {
       const filteredDashboards = dashboards.filter((dashboard) =>
-        normalizeText(dashboard.title).includes(normalizedTerm)
+        hasFuzzyMatch(dashboard.title, normalizedTerm)
       );
 
       if (filteredDashboards.length > 0) {
