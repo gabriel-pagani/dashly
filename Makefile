@@ -5,7 +5,7 @@ build-project:
 
 clean-project:
 	cd _deploy/ && \
-	docker compose down && \
+	docker compose down -v && \
 	docker system prune -a --volumes --force && \
     cd .. && rm -rf backend/build/ backend/static/ database/ frontend/node_modules/
 
