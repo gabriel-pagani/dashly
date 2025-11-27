@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getCookie } from "../../helpers/getCookie";
 import "../../styles/login.css";
+import blackLogo from "../../images/black_logo.png";
 
 function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
@@ -60,7 +61,13 @@ function Login({ onLoginSuccess }) {
     // Adicionamos este wrapper para conter os estilos da página de login
     <div className="login-wrapper">
       <div className="container" id="tela-login">
-        <h2>Vyzion</h2>
+        <div className="logo-container">
+          <img
+            src={blackLogo}
+            alt="Vyzion Logo"
+            className="login-logo"
+          />
+        </div>
 
         {successMessage && (
           <div className="mensagem sucesso">

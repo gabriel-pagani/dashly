@@ -143,3 +143,17 @@ ul.regras li {
   margin-bottom: 5px;
   list-style: inside;
 }
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.login-logo {
+  max-width: 320px;
+  width: 80%;
+  height: auto;
+  display: block;
+}
