@@ -1,4 +1,4 @@
-name: vyzio
+name: vyzion
 
 services:
   database:
@@ -23,7 +23,7 @@ services:
     build:
       context: ../
       dockerfile: _deploy/Dockerfile
-    image: vyzio
+    image: vyzion
     container_name: app
     expose:
       - "8000"
